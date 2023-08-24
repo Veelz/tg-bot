@@ -23,7 +23,8 @@ class OpenWeatherApi:
         self.api_token = api_token
 
     async def get_weather(self, city: str):
-        url = self.OPEN_WEATHER_URL.format(base_url=self.base_url, city=city, api_token=self.api_token)
+        url = self.OPEN_WEATHER_URL.format(
+            base_url=self.base_url, city=city, api_token=self.api_token)
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
         data = response.json()
@@ -39,14 +40,16 @@ class OpenWeatherApi:
         timezone = weather_dict["timezone"]
         tz = datetime.timezone(datetime.timedelta(seconds=timezone))
 
-        sunrise_timestamp = datetime.datetime.fromtimestamp(weather_dict["sys"]["sunrise"], tz).strftime('%Y-%m-%d %H:%M')
-        sunset_timestamp = datetime.datetime.fromtimestamp(weather_dict["sys"]["sunset"], tz).strftime('%Y-%m-%d %H:%M')
+        sunrise_timestamp = datetime.datetime.fromtimestamp(
+            weather_dict["sys"]["sunrise"], tz).strftime('%Y-%m-%d %H:%M')
+        sunset_timestamp = datetime.datetime.fromtimestamp(
+            weather_dict["sys"]["sunset"], tz).strftime('%Y-%m-%d %H:%M')
         local_datetime = datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M')
 
         wd = weather_dict["weather"][0]["description"]
         if (weather_description := weather_dict["weather"][0]["main"]) in OpenWeatherApi.code_to_smile:
             wd += " " + OpenWeatherApi.code_to_smile[weather_description]
 
-        return WeatherModel(city=city, current_temp=cur_temp, weather_description=wd, 
-                            humidity=humidity, pressure=math.ceil(pressure/1.333), wind=wind, 
+        return WeatherModel(city=city, current_temp=cur_temp, weather_description=wd,
+                            humidity=humidity, pressure=math.ceil(pressure/1.333), wind=wind,
                             sunrise_datetime=sunrise_timestamp, sunset_datetime=sunset_timestamp, local_datetime=local_datetime)

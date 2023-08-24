@@ -15,7 +15,8 @@ class WeatherTelegramBotView:
 
     def __init__(self, open_weather_api: OpenWeatherApi) -> None:
         self._open_weather_api = open_weather_api
-        self._env = Environment(loader=FileSystemLoader(config.TEMPLATES_DIR), enable_async=True)
+        self._env = Environment(loader=FileSystemLoader(
+            config.TEMPLATES_DIR), enable_async=True)
 
     async def start_command(self, message: types.Message):
         await message.reply("Привет! Напиши название города и я пришлю сводку погоды")
